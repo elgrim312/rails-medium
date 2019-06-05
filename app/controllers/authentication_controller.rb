@@ -12,16 +12,15 @@ class AuthenticationController < ApplicationController
   end
 
   def register
-    @user = User.new(user_params)
+    @user = User.new
+    @user.email = params[:email]
+    @user.password= params[:password]
+    @user.name= params[:name]
 
     if @user.save
       render json: @user, status: :created
     else
       render json: @user.errors, status: :unprocessable_entity
     end
-  end
-
-  def user_params
-    params.require(:user).permit(:email, :password)
   end
 end
