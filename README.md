@@ -21,4 +21,7 @@ Things you may want to cover:
 
 * Deployment instructions
 
-* ...
+# Lancé le serveur
+
+- `rails server`
+- for insert user to bdd
