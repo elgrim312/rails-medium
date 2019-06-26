@@ -4,6 +4,11 @@ class ApplicationController < ActionController::API
 
   private
 
+  def authenticate_admin
+    @current_user = User.find(decoded_auth_token[:user_id])
+    render json: { error: 'Not Authorized' }, status: 401 unless @current_user
+  end
+
   def authenticate_request
     @current_user = AuthorizeApiRequest.call(request.headers).result
     render json: { error: 'Not Authorized' }, status: 401 unless @current_user
