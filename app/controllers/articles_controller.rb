@@ -1,11 +1,15 @@
-class ArticlesController < ApplicationController
+class ArticlesController < ApplicationController 
+  include ActionController::MimeResponds
   before_action :set_article, only: [:show, :update, :destroy]
 
   # GET /articles
   def index
     @articles = Article.all
-
-    render json: @articles
+    respond_to do |format|
+      format.json do
+        render :json => @articles.to_json(:include => { :user => { :only => :name } })
+      end
+    end
   end
 
   # GET /articles/1
@@ -15,10 +19,14 @@ class ArticlesController < ApplicationController
 
   # POST /articles
   def create
-    @article = Article.new(article_params)
+    @article = Article.new(article_params.merge(user_id: current_user.id))
 
     if @article.save
-      render json: @article, status: :created, location: @article
+      respond_to do |format|
+        format.json do
+          render :json => @article.to_json(:include => { :user => { :only => :name } })
+        end
+      end
     else
       render json: @article.errors, status: :unprocessable_entity
     end
@@ -53,4 +61,8 @@ class ArticlesController < ApplicationController
     def article_params
       params.require(:article).permit(:title, :description, :body)
     end
+
+    def as_json(options = {})
+    super(options.merge(include: :user))
+  end
 end
