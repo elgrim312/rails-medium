@@ -3,7 +3,7 @@ class CommentController < ApplicationController
 
   # GET /comment
   def index
-    @comment = Comment.all
+    @comment = Comment.where(article_id: params[:article_id])
 
     render json: @comment.to_json(:include => { :user => { :only => :name } })
   end
