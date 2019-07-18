@@ -1,6 +1,6 @@
 class ArticlesController < ApplicationController 
   include ActionController::MimeResponds
-  before_action :set_article, only: [:show, :update, :destroy]
+  before_action :set_article, only: [:get_comments, :show, :update, :destroy]
 
   # GET /articles
   def index

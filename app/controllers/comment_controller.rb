@@ -1,30 +1,31 @@
 class CommentController < ApplicationController
   before_action :set_comment, only: [:show, :update, :destroy]
 
-  # GET /comments
+  # GET /comment
   def index
-    @comment = Comment.all
+    @comment = Comment.where(article_id: params[:article_id])
 
-    render json: @comment
+    render json: @comment.to_json(:include => { :user => { :only => :name } })
   end
 
-  # GET /comments/1
+  # GET /comment/1
   def show
     render json: @comment
   end
 
-  # POST /comments
+  # POST /comment
   def create
-    @comment = Comment.new(comment_params)
+    @comment = Comment.new(comment_params.merge(user_id: current_user.id, article_id: params[:article_id]))
 
     if @comment.save
-      render json: @comment, status: :created, location: @comment
+          render json: @comment.to_json(:include => { :user => { :only => :name } })
+
     else
       render json: @comment.errors, status: :unprocessable_entity
     end
   end
 
-  # PATCH/PUT /comments/1
+  # PATCH/PUT /comment/1
   def update
     if @comment.update(comment_params)
       render json: @comment
@@ -33,7 +34,7 @@ class CommentController < ApplicationController
     end
   end
 
-  # DELETE /comments/1
+  # DELETE /comment/1
   def destroy
     @comment.destroy
   end
@@ -47,6 +48,6 @@ class CommentController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def comment_params
-    params.permit(:content)
+    params.permit(:content, :article_id)
   end
 end
